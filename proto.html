@@ -1,10 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
+  <meta charset="UTF-8">
     <style>
       #space{
         background-color: #c8c8c8;
-        border: 1px solid red;
+        width: 400px;
+        height: 400px;
+      }
+      #point{
+        border: 1px solid black;
+        width: 198px;
+        height: 198px;
+      }
+      #click_space{
         width: 400px;
         height: 400px;
       }
@@ -13,25 +22,74 @@
   </head>
   <body>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-    <div id="player"></div>
     <br>
-    
-    <form>
-     <label for="cur">현재시간</label>
-      <input type="text" id="cur">
-      <label for="pos">현재좌표</label>
-      <input type="text" id="pos">
-
-    </form>
-    <div id="space" onclick="clicked(event)"></div>
-    <ul id="save">
-    </ul>
+    <div style="width:45%; height: 150px; border:1px; float:left">
+      <div id="player"></div>
+    </div>
+    <div style="width:55%; float:right">
+      <form>
+      <label for="cur">현재시간</label>
+        <input type="text" id="cur">
+        <label for="pos">현재좌표</label>
+        <input type="int" id="pos">
+      </form>
+      <br>
+      <div>
+        <div id="space" style="margin-left:65px" onclick="clicked(event)">
+            <img src="/Users/gimseong-eon/Desktop/proto/sad.png" alt="candy image">
+        </div>
+      </div>
+      <div id ="save" style="overflow:auto; width:500px; height:150px;">
+      </div>
+      <form methd="post">
+      <label for="max_pos">최대 좌표 변수 (초기값 5)</label>
+        <input type="int" id="max_pos" value=5>
+        <label for="max_cur">시간 변수</label>
+        <input type="int" id="max_time">
+      </form>
+      <form>
+        <label for="movie_title">영화 이름</label>
+        <input type="text" id="movie_title">
+      </form>
+    </div>
+      
 
     <script>
+      //영화 정보 입력한대로 서버에서 가져오기
+      //json 파일만 가져올게요~ 링크 바꾸는거 구현해야댐 MOVIE_ID = document.getElementById("movie_title").value, ${MOVIE_ID}
+      function getPlayinfo(){
+       const response = fetch('http://127.0.0.1:5000/movie/moonknight');
+       return response.then(res => res.json());
+      }
+
+      //가져온 json파일 받아서 처리할게요~
+      var token;
+      async function exec(){
+        var text;
+        try{
+          text = await getPlayinfo();
+          token = text.Token;
+          console.log(token);
+        }
+        catch(error){
+          console.log(error);
+        }
+      }
+      exec();
+
+      //영화 제목 enter 감지
+      var title = document.getElementById("movie_title");
+      title.addEventListener('keypress', function(key){
+        if (key.key == 'Enter'){
+          exec();
+        }
+      });
+
       // 클릭되면
       function clicked(e){
-        x = e.offsetX;
-        y = e.offsetY;
+        range = 200/document.getElementById("max_pos").value
+        x = (e.offsetX-200)/range;
+        y = (-1*(e.offsetY-200))/range;
         document.getElementById('pos').value = x + ", " + y;
       }
 
@@ -45,11 +103,12 @@
       // 3. This function creates an <iframe> (and YouTube player)
       //    after the API code downloads.
       var player;
+      var url_title = document.getElementById('movie_title').value
       function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
           height: '360',
           width: '640',
-          videoId: 'GDpE41slO9w',
+          videoId: token,
           events: {
             'onReady': onPlayerReady,
             'onStateChange':  count,
@@ -60,7 +119,7 @@
       function count(){
         var time =  parseFloat((player.playerInfo.currentTime));
         var sp = document.getElementById('space');
-         document.getElementById("cur").value = time+1;
+         document.getElementById("cur").value = (time+1).toFixed(2);
          if(time < 18.5 && time > 14){
             
             sp.style.backgroundColor = "#FFB914";
@@ -72,7 +131,7 @@
           newLi.innerHTML = document.getElementById('pos').value;
           list.appendChild(newLi);
          }
-         else sp.style.backgroundColor = "#c8c8c8	";
+         else sp.style.backgroundColor = "#c8c8c8   ";
       }
       setInterval(count,1000);
 
@@ -80,9 +139,9 @@
       function onPlayerReady(event) {
         event.target.playVideo();
       }
-
+      
+      //
     </script>
 
   </body>
 </html>
-
