@@ -47,27 +47,29 @@
         <label for="max_cur">시간 변수</label>
         <input type="int" id="max_time">
       </form>
-      <form>
-        <label for="movie_title">영화 이름</label>
-        <input type="text" id="movie_title">
-      </form>
+
+      <label for="movie_title">영화 이름</label>
+      <input type="text" id="movie_title" value ="moonKnight">
+      <input type="button" value="submit" onclick="exec()">
+
     </div>
       
 
     <script>
       //영화 정보 입력한대로 서버에서 가져오기
-      //json 파일만 가져올게요~ 링크 바꾸는거 구현해야댐 MOVIE_ID = document.getElementById("movie_title").value, ${MOVIE_ID}
+      //json 파일만 가져올게요~
       function getPlayinfo(){
-       const response = fetch('http://127.0.0.1:5000/movie/moonknight');
-       return response.then(res => res.json());
+        var MOVIE_ID = document.getElementById("movie_title").value;
+        const response = fetch('http://127.0.0.1:5000/movie/' + title);
+        return response.then(res => res.json());
       }
 
-      //가져온 json파일 받아서 처리할게요~
+      //가져온 json파일 받아서 처리할게요~ 
       var token;
       async function exec(){
         var text;
         try{
-          text = await getPlayinfo();
+          text = await getPlayinfo(); //promise return
           token = text.Token;
           console.log(token);
         }
@@ -76,14 +78,6 @@
         }
       }
       exec();
-
-      //영화 제목 enter 감지
-      var title = document.getElementById("movie_title");
-      title.addEventListener('keypress', function(key){
-        if (key.key == 'Enter'){
-          exec();
-        }
-      });
 
       // 클릭되면
       function clicked(e){
