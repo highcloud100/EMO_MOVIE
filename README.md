@@ -11,6 +11,7 @@
 
 ## 2022/04/30
 ![image](https://user-images.githubusercontent.com/80192345/166092147-a4e7fe1c-ab6d-4c63-bdf5-8b3bbb0dc72d.png)
+![image](https://user-images.githubusercontent.com/80192345/167243518-db1a9211-bc01-49d9-8448-b79053fcffe5.png)
 
 ## 2022/05/03
 - flask mysql 연결 확인 
