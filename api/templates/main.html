@@ -21,10 +21,11 @@
     </style>
   </head>
   <body>
+    <h1>{{ title }}</h1>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
     <br>
     <div style="width:45%; height: 150px; border:1px; float:left">
-      <div id="player"></div>
+      <div id="player"></div>   
     </div>
     <div style="width:55%; float:right">
       <form>
@@ -34,60 +35,78 @@
         <input type="int" id="pos">
       </form>
       <br>
-      <!--<a style="margin-left:245px;">High</a>-->
       <div>
-        <!--<a style="float:left; line-height:130px"><br>Negative</a>
-        <a style="float:right; margin-right:43%; line-height:130px"><br>Positive</a>-->
         <div id="space" style="margin-left:65px" onclick="clicked(event)">
-            <img src="/Users/gimseong-eon/Desktop/proto/sad.png" alt="candy image">
-          <!--<div id="point" style="float: right; pointer-events: none;"></div>
-          <div id="point" style="pointer-events: none;"></div>
-          <div id="point" style="float: right; pointer-events: none;"></div>
-          <div id="point" style="pointer-events: none;"></div> -->
+            <!--<img src="/Users/gimseong-eon/Desktop/proto/sad.png" alt="candy image">-->
         </div>
       </div>
-      <!--<a style="margin-left:250px;">Low</a>-->
       <div id ="save" style="overflow:auto; width:500px; height:150px;">
       </div>
-      <form>
-        <br>
-      <label for="cur">최대 좌표 변수 (초기값 5)</label>
-        <input type="int" id="max_pos">
-        <label for="pos">시간 변수</label>
+      <form methd="post">
+      <label for="max_pos">최대 좌표 변수 (초기값 5)</label>
+        <input type="int" id="max_pos" value=5>
+        <label for="max_cur">시간 변수</label>
         <input type="int" id="max_time">
       </form>
+
     </div>
       
 
     <script>
+      var token;
+      exec();
+      //영화 정보 입력한대로 서버에서 가져오기
+      //json 파일만 가져올게요~
+      function getPlayinfo(){
+        var MOVIE_ID = document.querySelector('h1').innerText;
+        const response = fetch('http://127.0.0.1:5000/movie/' + MOVIE_ID);
+        return response.then(res => res.json());
+      }
+
+      //가져온 json파일 받아서 처리할게요~ 
+      async function exec(){
+        var text;
+        try{
+          text = await getPlayinfo(); //promise return
+          token = text.Token;
+          console.log(token);
+          iframeCall();
+        }
+        catch(error){
+          console.log(error);
+        }
+        
+      }
+     
       // 클릭되면
       function clicked(e){
-        if (document.getElementById("max_pos").value=="undefined")
-            range = 5
-        else range = 200/document.getElementById("max_pos").value
+        range = 200/document.getElementById("max_pos").value
         x = (e.offsetX-200)/range;
         y = (-1*(e.offsetY-200))/range;
         document.getElementById('pos').value = x + ", " + y;
       }
+      function iframeCall(){
+          // 2. This code loads the IFrame Player API code asynchronously.
+          var tag = document.createElement('script');
+          tag.src = "https://www.youtube.com/iframe_api";
+          var firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-      // 2. This code loads the IFrame Player API code asynchronously.
-      var tag = document.createElement('script');
+          // 3. This function creates an <iframe> (and YouTube player)
+          //    after the API code downloads.
+          var player;
+          var url_title = document.getElementById('movie_title').value
+      }     
 
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-      // 3. This function creates an <iframe> (and YouTube player)
-      //    after the API code downloads.
-      var player;
+     
       function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
           height: '360',
           width: '640',
-          videoId: 'GDpE41slO9w',
+          videoId: token,
           events: {
             'onReady': onPlayerReady,
-            'onStateChange':  count,
+            'onStateChange':  count
           }
         });
       }
@@ -107,7 +126,7 @@
           newLi.innerHTML = document.getElementById('pos').value;
           list.appendChild(newLi);
          }
-         else sp.style.backgroundColor = "#c8c8c8	";
+         else sp.style.backgroundColor = "#c8c8c8   ";
       }
       setInterval(count,1000);
 
@@ -115,9 +134,9 @@
       function onPlayerReady(event) {
         event.target.playVideo();
       }
-
+      
+      //
     </script>
 
   </body>
 </html>
-
