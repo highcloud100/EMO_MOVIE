@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <ul>
+  {% for n in mlist %}
+  <li  onclick="sendPost(this)">{{n[0]}}</li>
+  {% endfor %}
+  </ul>
+
+  <script>
+    url = "http://127.0.0.1:5000/movie"
+    function sendPost(obj){
+      var form = document.createElement('form');
+      form.setAttribute('method', 'post');
+      form.setAttribute('action', url);
+      document.charset = "utf-8";
+
+      var titleInfo = document.createElement('input');
+      titleInfo.setAttribute('type', 'hidden');
+      titleInfo.setAttribute('name','title');
+      titleInfo.setAttribute('value',obj.innerText);
+      form.appendChild(titleInfo);
+      document.body.appendChild(form);
+      form.submit();
+    }
+  
+  </script>
+</body>
+</html>

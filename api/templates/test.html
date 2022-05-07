@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- <form method="post" action="http://127.0.0.1:5000/sign-up">
+    <input type="email" name="email"> <br> 
+    <input type="text" name="id"><br> 
+    <input type="password" name="password"> <br> 
+    <textarea cols="30" rows="10"></textarea>
+    <input type="submit" value="submit">
+  </form> -->
+
+    <input type="text" id="email"> <br> 
+    <input type="text" id="name"><br> 
+    <input type="password" id="password"> <br> 
+    <textarea cols="30" rows="10" id="profile"></textarea>
+    <button onclick="sendInfo()">click</button>
+
+    <p>
+      <hr>
+    </p>
+
+  <script>
+    function sendInfo(){
+      fetch('http://127.0.0.1:5000/sign-up',{
+      method : "POST",
+      headers:{
+        'Content-Type' : 'application/json', // headers 빼먹으면 안됨
+        'Accept' : 'application/json',
+      },
+      body : JSON.stringify({
+        email : document.getElementById('email').value,
+        name : document.getElementById('name').value,
+        password : document.getElementById('password').value,
+        profile : document.getElementById('profile').value,
+      })
+     }).then((response) => alert(response));
+    }
+  </script>
+</body>
+</html>
