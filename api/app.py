@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, Text
 
 def create_app(test_config=None):
   app = Flask(__name__)
-   
+
   if test_config is None:
     app.config.from_pyfile("config.py")
   else:
