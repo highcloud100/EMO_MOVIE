@@ -46,7 +46,7 @@
       <label for="max_pos">최대 좌표 변수 (초기값 5)</label>
         <input type="int" id="max_pos" value=5>
         <label for="max_cur">시간 변수</label>
-        <input type="int" id="max_time">
+        <input type="int" id="max_time" value=5>
       </form>
 
     </div>
@@ -54,6 +54,8 @@
 
     <script>
       var token;
+      var timeStamp;
+
       exec();
       //영화 정보 입력한대로 서버에서 가져오기
       //json 파일만 가져올게요~
@@ -69,7 +71,10 @@
         try{
           text = await getPlayinfo(); //promise return
           token = text.Token;
+          timeStamp = text.TimeStamp.split(',')
+          timeStamp = timeStamp.map(Number);
           console.log(token);
+          console.log(timeStamp)
           iframeCall();
         }
         catch(error){
@@ -85,6 +90,7 @@
         y = (-1*(e.offsetY-200))/range;
         document.getElementById('pos').value = x + ", " + y;
       }
+
       function iframeCall(){
           // 2. This code loads the IFrame Player API code asynchronously.
           var tag = document.createElement('script');
@@ -96,8 +102,7 @@
           //    after the API code downloads.
           var player;
           var url_title = document.getElementById('movie_title').value
-      }     
-
+      }
      
       function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
@@ -110,26 +115,37 @@
           }
         });
       }
-      // 카운팅 / 관리
+      // 카운팅 / 관리 
+      //일단 잘 모르겠어서 green : timestamp +- period(입력한 시간) 구간 / yellow : timestamp +- (입력한 시간+3) 구간으로 설정함 yellow, green 앞뒤로 각각 연구자가 입력할 수 있어야 하나..?
+      var i = 0
       function count(){
         var time =  parseFloat((player.playerInfo.currentTime));
         var sp = document.getElementById('space');
-         document.getElementById("cur").value = (time+1).toFixed(2);
-         if(time < 18.5 && time > 14){
-            
-            sp.style.backgroundColor = "#FFB914";
-         }
-         else if(time < 25 && time >= 18.5){
-          sp.style.backgroundColor = "#4AB34A";
-          var list = document.getElementById('save');
-          var newLi = document.createElement('li');
-          newLi.innerHTML = document.getElementById('pos').value;
-          list.appendChild(newLi);
-         }
-         else sp.style.backgroundColor = "#c8c8c8   ";
+        var period = parseFloat(document.getElementById("max_time").value);
+        document.getElementById("cur").value = time.toFixed(2);
+
+        if((time < timeStamp[i] - period && time > timeStamp[i] - period- 3)
+        || (time < timeStamp[i] + period + 3 && time > timeStamp[i] + period)){
+          sp.style.backgroundColor = "#FFB914";
+          console.log(timeStamp[i] - period);
+        }
+        else if(time < timeStamp[i] + period && time >= timeStamp[i] - period){
+        sp.style.backgroundColor = "#4AB34A";
+        console.log("green");
+        console.log(timeStamp[i] + period);
+        }
+        else {
+          sp.style.backgroundColor = "#c8c8c8";
+          console.log("c8");
+        }
+
+        if (time > timeStamp[i] + period + 3){
+          i++;
+          console.log(i, timeStamp[i] + period + 3);
+        }
       }
       setInterval(count,1000);
-
+      
       // 4. The API will call this function when the video player is ready.
       function onPlayerReady(event) {
         event.target.playVideo();
