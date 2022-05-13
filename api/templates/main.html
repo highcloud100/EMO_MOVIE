@@ -59,7 +59,7 @@
       //json 파일만 가져올게요~
       function getPlayinfo(){
         var MOVIE_ID = document.querySelector('h1').innerText;
-        const response = fetch("{{ url_for('movie') }}" + MOVIE_ID);
+        const response = fetch("{{ url_for('movie') }}/" + MOVIE_ID);
         return response.then(res => res.json());
       }
 
