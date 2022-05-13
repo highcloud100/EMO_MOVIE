@@ -16,7 +16,7 @@ def create_app(test_config=None):
   def home():
     objects = app.database.execute("select title from movie_info").fetchall() #db에서 영화 리스트 뽑아옴
     print(objects)
-    return render_template('home.html', mlist=objects) #home.html에 반환
+    return render_template('select.html', mlist=objects) #home.html에 반환
 
   # 영화 요청시 반환
   @app.route('/movie', methods=['POST'])  #home.html에서 영화 선택시 post 
