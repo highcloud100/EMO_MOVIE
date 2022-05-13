@@ -14,7 +14,7 @@
   </ul>
 
   <script>
-    url = "http://127.0.0.1:5000/movie"
+    url = " {{ url_for('movie') }} "
     function sendPost(obj){
       var form = document.createElement('form');
       form.setAttribute('method', 'post');
