@@ -26,6 +26,9 @@
 - 서버 올리기 완료
 - ubuntu 20.04 LTS
    - nginx + gunicorn + flask + mysql 
-- 실험자 정보 입력 페이지 / 영화 선택 페이지 / 시간에 따른 배경색 변경 / 좌표 보내기 다듬는 중
+- 피험자 정보 입력 페이지 / 영화 선택 페이지 / 시간에 따른 배경색 변경 / 좌표 보내기 다듬는 중
 
 ![image](https://user-images.githubusercontent.com/80192345/168413104-5990c6a9-ecdf-4321-a9d2-cc1fe11e4b29.png)
+
+## 2022/05/17
+- 피험자 정보 db에 저장 및 세션 / 로그아웃 / 영화 포스터 업로드 기능
