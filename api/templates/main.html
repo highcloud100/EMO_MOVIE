@@ -136,12 +136,20 @@
           }
         });
       }
+
+      function onPlayerReady(event){
+        event.target.playVideo();
+      }
+
       // 카운팅 / 관리
       //일단 잘 모르겠어서 green : timestamp +- period(입력한 시간) 구간 / yellow : timestamp +- (입력한 시간+3) 구간으로 설정함 yellow, green 앞뒤로 각각 연구자가 입력할 수 있어야 하나..?
       var i = 0
+      var check = 0;
       function count(){
         var point = document.getElementById('pos').value;
         var time =  parseFloat((player.playerInfo.currentTime));
+        var videoLength = parseFloat(player.getDuration());
+        console.log(videoLength);
         var sp = document.getElementById('space');
         var period = parseFloat(document.getElementById("max_time").value);
         document.getElementById("cur").value = time.toFixed(0);
@@ -173,11 +181,14 @@
 
         if (time > timeStamp[i] + period + 3){
           i++;
-          if (i == timeStamp.length){
+        }
+        if (time.toFixed(0) == videoLength - 2){    //영상 끝나기 1초 전까지 측정합니다.
+          if (check == 0){
             console.log(white);
             console.log(green);
             console.log(yellow);
-            send_point();         //마지막 타임스탬프에서 좌표 저장을 끝마치고 서버로 좌표를 보냅니다.
+            send_point();        //영상 마지막까지 좌표 저장을 끝마치고 서버로 좌표를 보냅니다.
+            check = 1;         //서버에 중복해서 보내지 않도록 
           }
         }
       }
@@ -187,9 +198,6 @@
       function onPlayerReady(event) {
         event.target.playVideo();
       }
-
-      //
     </script>
-
   </body>
 </html>
