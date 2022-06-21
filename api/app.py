@@ -88,7 +88,8 @@ def create_app(test_config=None):
   def upload_poster():
     if request.method == 'POST' and request.form['pwd'] == "1234":
       f = request.files['file']
-      f.save('./static/'+ secure_filename(request.form['title']+'.png'))
+      print(app.root_path);
+      f.save( app.root_path + '/static/'+ secure_filename(request.form['title']+'.png'))
     return redirect(url_for('render_file'))
   return app
 
