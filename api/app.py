@@ -8,6 +8,9 @@ from sqlalchemy import create_engine, Text
 from flask import Flask, render_template, redirect, request, session, jsonify, url_for
 from flask_session import Session
 
+# 1. 서버에서 좌표 받는 것
+# 2. 예외 처리
+# 3. 로그 남기는 거
 
 class userInfo():
     def __init__(self, username, gender, age, date):
@@ -21,7 +24,6 @@ def create_app(test_config=None):
     app.config["SESSION_PERMANENT"] = False
     app.config["SESSION_TYPE"] = "filesystem"
     app.config["SECRET_KEY"] = '0000' # secret_key는 서버상에 동작하는 어플리케이션 구분하기 위해 사용하고 복잡하게 만들어야함.
-    #session(app)
 
     if test_config is None:
         app.config.from_pyfile("config.py")
@@ -40,25 +42,32 @@ def create_app(test_config=None):
         session.clear()
 
         #######################
-
         username = request.form['name']
         gender = request.form['gender']
         age = request.form['age']
-        # date = request.form('date')
+        # date = request.form('date') # date 어떻게 받는지 모르겠다.
         email = request.form['email']
 
         try:
             data = userInfo.query.filter_by(username=username, email=email).first()
-            if data is not None:
-                session['username'] = request.form['name']
+
+            # data = app.database.execute(f"SELECT * FROM subject_info WHERE name = username AND  email = email")
+            if data is None: # 쿼리 데이터가 존재하면
+               # session['username'] = request.form['name']
+                session['username'] = username
                 app.database.execute(
                     # f"INSERT INTO subject_info(name, gender, age, date, email) VALUES({userInfo.username}, {userInfo.gender}, {userInfo.age}, {userInfo.date}, {userInfo.email})")
-                    f"INSERT INTO subject_info(name, age) VALUES(\'{username}\', {age})")
+                    f"INSERT INTO subject_info(name, age, email) VALUES(\'{username}\', {age}, \'{email}\')")
                 return redirect(url_for('movieSelect'))
-            else:
-                return 'Don\'t Login'
+            # else:
+            #     return 'else'
         except:
-            return "Don't Login"
+            session['username'] = username
+            app.database.execute(
+                # f"INSERT INTO subject_info(name, gender, age, date, email) VALUES({userInfo.username}, {userInfo.gender}, {userInfo.age}, {userInfo.date}, {userInfo.email})")
+                f"INSERT INTO subject_info(name, age, email) VALUES(\'{username}\', {age}, \'{email}\')")
+            return redirect(url_for('movieSelect'))
+            #return "Don't Login"
 
         #######################
         # 기존 Version(예외처리 전)
@@ -115,6 +124,7 @@ def create_app(test_config=None):
         white = data['WHITE']
         yellow = data['YELLOW']
         green = data['GREEN']
+        title = data['TITLE']
 
         #하나만
         # x = white[0]
@@ -125,40 +135,49 @@ def create_app(test_config=None):
         # print(point)
 
         #white
-        time = [], point_White_x = [], point_White_y = []
+        time = []
+        point_White_x = []
+        point_White_y = []
         for i in range(len(white)):
             x = white[i]
             ddate = x.split(":")
             point = ddate[1].split(", ")
-            time += ddate[0]
-            point_White_x += point[0]
-            point_White_y += point[1]
+            time.append(ddate[0])
+            point_White_x.append(float(point[0]))
+            point_White_y.append(float(point[1]))
 
-        point_Yellow_x = [], point_Yellow_y = []
+        white_x = sum(point_White_x) / (len(white))
+        white_y = sum(point_White_y) / (len(white))
+
+
+        point_Yellow_x = []
+        point_Yellow_y = []
         for i in range(len(yellow)):
             x = yellow[i]
             ddate = x.split(":")
             point = ddate[1].split(", ")
-            time += ddate[0]
-            point_Yellow_x += point[0]
-            point_Yellow_y += point[1]
+            time.append(ddate[0])
+            point_Yellow_x.append(float(point[0]))
+            point_Yellow_y.append(float(point[1]))
 
-        point_Green_x = [], point_Green_y = []
+        yellow_x = sum(point_Yellow_x) / (len(yellow))
+        yellow_y = sum(point_Yellow_y) / (len(yellow))
+
+        point_Green_x, point_Green_y = [], []
         for i in range(len(green)):
             x = green[i]
             ddate = x.split(":")
             point = ddate[1].split(", ")
-            time += ddate[0]
-            point_Green_x += point[0]
-            point_Green_y += point[1]
+            time.append(ddate[0])
+            point_Green_x.append(float(point[0]))
+            point_Green_y.append(float(point[1]))
 
+        green_x = sum(point_Green_x) / (len(green))
+        green_y = sum(point_Green_y) / (len(green))
 
-        app.database.execute(f"SELECT * FROM LEFT JOIN subject_info ON data.subjectID = subject_info.id")
-        app.database.execute(f"SELECT * FROM LEFT JOIN movie_info ON data.movieTitle = movie_info.title")
-
-        #subjectID, movieTitle 못함
-        app.database.execute(f"INSERT INTO data(date, subjectID, movieTitle, white_x, white_y, yellow_x, yellow_y, green_x, green_y) \
-                            VALUES(\'{time}\', {}, {}, {point_White_x}, {point_White_y}, {point_Yellow_x}, {point_Yellow_y}, {point_Green_x}, {point_Green_y})") # {} 부분은 추가해야될 부분
+        # date 제외, 좌표 찍은 시간들은 column 만들어야 할 듯?
+        app.database.execute(f"INSERT INTO data(subjectID, movieTitle, white_x, white_y, yellow_x, yellow_y, green_x, green_y) \
+        VALUES({session['username']}, {title}, {str(white_x)}, {str(white_y)}, {str(yellow_x)}, {str(yellow_y)}, {str(green_x)}, {str(green_y)})")
         return 'ok'
 
 
