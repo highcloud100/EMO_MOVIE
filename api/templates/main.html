@@ -17,16 +17,16 @@
         width: 400px;
         height: 400px;
       }
-      
+
     </style>
   </head>
   <body>
-    <script src="http://code.jquery.com/jquery-latest.js"></script> 
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
     <h1>{{ title }}</h1>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
     <br>
     <div style="width:45%; height: 150px; border:1px; float:left">
-      <div id="player"></div>   
+      <div id="player"></div>
     </div>
     <div style="width:55%; float:right">
       <form>
@@ -51,7 +51,7 @@
       </form>
 
     </div>
-      
+
 
     <script>
       var token;
@@ -65,11 +65,11 @@
       //json 파일만 가져올게요~
       function getPlayinfo(){
         var MOVIE_ID = document.querySelector('h1').innerText;
-        const response = fetch("{{ url_for('movie') }}/" + MOVIE_ID);
+        const response = fetch('http://127.0.0.1:5000/movie/' + MOVIE_ID);
         return response.then(res => res.json());
       }
 
-      //가져온 json파일 받아서 처리할게요~ 
+      //가져온 json파일 받아서 처리할게요~
       async function exec(){
         var text;
         try{
@@ -84,9 +84,9 @@
         catch(error){
           console.log(error);
         }
-        
+
       }
-     
+
       // 클릭되면
       function clicked(e){
         range = 200/document.getElementById("max_pos").value
@@ -95,22 +95,19 @@
         document.getElementById('pos').value = x + ", " + y;
       }
 
-      //좌표보내기
+      // 좌표보내기
       function send_point(){
         $.ajax({
-          type: 'POST',
-          url: 'http://ip:5000/flask', //아직없
-          traditional: true,
-          data: {
-            WHITE : white,  //배열 
-            GREEN : green,
-            YELLOW : yellow
+          type: "POST",
+          url: "http://127.0.0.1:5000//request",
+          data: JSON.stringify({"WHITE" : white, "YELLOW" : yellow, "GREEN" : green,"TITLE" :" {{ title }} " }),
+          contentType: "application/json; charset=utf-8",
+          dataType: "JSON",
+          success : function(result){
+            console.log("result = "+ result);
           },
-          dataType: 'JSON',
-          success: function(result){
-            jQuery("#a").html(result);
-          }, eroor: function(result){
-            console.log(result);
+          error : function(xtr,status,error){
+            console.log(xtr +":"+status+":"+error);
           }
         })
       }
@@ -127,7 +124,7 @@
           var player;
           var url_title = document.getElementById('movie_title').value
       }
-     
+
       function onYouTubeIframeAPIReady() {
         player = new YT.Player('player', {
           height: '360',
@@ -139,7 +136,7 @@
           }
         });
       }
-      // 카운팅 / 관리 
+      // 카운팅 / 관리
       //일단 잘 모르겠어서 green : timestamp +- period(입력한 시간) 구간 / yellow : timestamp +- (입력한 시간+3) 구간으로 설정함 yellow, green 앞뒤로 각각 연구자가 입력할 수 있어야 하나..?
       var i = 0
       function count(){
@@ -147,47 +144,50 @@
         var time =  parseFloat((player.playerInfo.currentTime));
         var sp = document.getElementById('space');
         var period = parseFloat(document.getElementById("max_time").value);
-        document.getElementById("cur").value = time.toFixed(2);
+        document.getElementById("cur").value = time.toFixed(0);
+        var p;
+
+        if (time != 0 && time != NaN && point != ""){
+          var p = time + ' : ' + point;
+         }
 
         if((time < timeStamp[i] - period && time > timeStamp[i] - period- 3)
         || (time < timeStamp[i] + period + 3 && time > timeStamp[i] + period)){
           sp.style.backgroundColor = "#FFB914";
-          var p = time + ' : ' + point;
+          if ( p != undefined){
           yellow.push(p);
-          console.log(timeStamp[i] - period);
+          }
         }
         else if(time < timeStamp[i] + period && time >= timeStamp[i] - period){
         sp.style.backgroundColor = "#4AB34A";
-        var p = time + ' : ' + point;
-        green.push(p);
-        console.log("green");
-        console.log(timeStamp[i] + period);
+          if ( p != undefined){
+          green.push(p);
+          }
         }
         else {
           sp.style.backgroundColor = "#c8c8c8";
-          var p = time + ' : ' + point;
+          if ( p != undefined){
           white.push(p);
-          console.log("c8");
+          }
         }
 
         if (time > timeStamp[i] + period + 3){
           i++;
-          console.log(i, timeStamp[i] + period + 3);
           if (i == timeStamp.length){
             console.log(white);
             console.log(green);
             console.log(yellow);
-            send_point();
+            send_point();         //마지막 타임스탬프에서 좌표 저장을 끝마치고 서버로 좌표를 보냅니다.
           }
         }
       }
-      setInterval(count,1000);
+      setInterval(count, 500);    //좌표는 0.5초마다 저장합니다. 오차가 조금씩 생깁니다,,
 
       // 4. The API will call this function when the video player is ready.
       function onPlayerReady(event) {
         event.target.playVideo();
       }
-      
+
       //
     </script>
 
