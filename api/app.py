@@ -95,6 +95,6 @@ def create_app(test_config=None):
 
 
 
-# set FLASK_APP=pybo
+# set FLASK_APP=app
 # set FLASK_ENV=development
 # set APP_CONFIG_FILE=C:\PROJECT\EMO_MOVIE\api\config\devel.py
