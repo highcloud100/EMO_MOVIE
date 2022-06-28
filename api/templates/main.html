@@ -100,7 +100,7 @@
         $.ajax({
           type: "POST",
           url: "{{ url_for('timestamp') }}" ,
-          data: JSON.stringify({"WHITE" : white, "YELLOW" : yellow, "GREEN" : green,"TITLE" :" {{ title }} " }),
+          data: JSON.stringify({"WHITE" : white, "YELLOW" : yellow, "GREEN" : green,"TITLE" :"{{title}}" }),
           contentType: "application/json; charset=utf-8",
           dataType: "JSON",
           success : function(result){
