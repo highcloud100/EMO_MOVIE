@@ -99,7 +99,7 @@
       function send_point(){
         $.ajax({
           type: "POST",
-          url: "{{ url_for('request') }}" ,
+          url: "{{ url_for('timestamp') }}" ,
           data: JSON.stringify({"WHITE" : white, "YELLOW" : yellow, "GREEN" : green,"TITLE" :" {{ title }} " }),
           contentType: "application/json; charset=utf-8",
           dataType: "JSON",
