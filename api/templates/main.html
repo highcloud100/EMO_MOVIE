@@ -2,58 +2,116 @@
 <html>
   <head>
   <meta charset="UTF-8">
-    <style>
-      #space{
-        background-color: #c8c8c8;
-        width: 400px;
-        height: 400px;
-      }
-      #point{
-        border: 1px solid black;
-        width: 198px;
-        height: 198px;
-      }
-      #click_space{
-        width: 400px;
-        height: 400px;
-      }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    </style>
+  <style>
+    @media screen and (min-width: 1100px) {
+      .container{
+        display:grid;
+        justify-items: center;
+        grid-template-columns: 1fr 1fr;
+        grid-column-gap: 20px;
+      }
+    }
+    @media screen and (max-width: 1100px) {
+      body{ background-color: lightgreen; }
+      .container{
+        display:grid;
+        justify-items: center;
+        grid-template-columns: auto;
+        grid-column-gap: 20px;
+      }
+    }
+
+    #space{
+      background-color: #c8c8c8;
+      width: 400px;
+      height: 400px;
+    }
+
+    img:hover{ cursor : pointer; }
+
+    #point{
+      border: 1px solid black;
+      width: 198px;
+      height: 198px;
+    }   
+
+  </style>
+
   </head>
   <body>
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-    <h1>{{ title }}</h1>
+    <h1 style="font-family: 'Whisper', cursive;">{{ title }}</h1>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
     <br>
-    <div style="width:45%; height: 150px; border:1px; float:left">
-      <div id="player"></div>
-    </div>
-    <div style="width:55%; float:right">
-      <form>
-      <label for="cur">현재시간</label>
-        <input type="text" id="cur">
-        <label for="pos">현재좌표</label>
-        <input type="int" id="pos">
-      </form>
-      <br>
-      <div>
-        <div id="space" style="margin-left:65px" onclick="clicked(event)">
-            <!--<img src="/Users/gimseong-eon/Desktop/proto/sad.png" alt="candy image">-->
+    <div class="container">
+      <div class="item">
+          <div id="player"></div>
+      </div>
+      <div class="item">
+        <div class= "BOX">
+          <form>
+          <!--  
+          <label for="cur">현재시간</label>
+            <input type="text" id="cur">-->
+            <label for="pos">현재좌표</label>
+            <input type="int" id="pos">
+          </form>
+          <br>
+          <div>
+            <div id="space" onclick="clicked(event)">
+              <img src="https://i.ibb.co/28K6hQJ/export-removebg-preview.png" alt="export-removebg-preview" border="0">
+            </div>
+          </div>
         </div>
+    </div>
+      <div class="item">
+        <form methd="post">
+          <label for="max_pos">최대 좌표 변수 (초기값 5)</label>
+            <input type="int" id="max_pos" value=5>
+            <label for="max_cur">time stamp</label>
+            <input type="int" id="max_time" value=5>
+        </form>
       </div>
-      <div id ="save" style="overflow:auto; width:500px; height:150px;">
-      </div>
-      <form methd="post">
-      <label for="max_pos">최대 좌표 변수 (초기값 5)</label>
-        <input type="int" id="max_pos" value=5>
-        <label for="max_cur">시간 변수</label>
-        <input type="int" id="max_time" value=5>
-      </form>
-
     </div>
 
-    //JS
+
     <script>
+      //js 파일 나중에 따로 만들기
+
+      //Youtube
+    function iframeCall(){
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+      var player;
+      var url_title = document.getElementById('movie_title').value
+    }
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('player', {
+        height: '360',
+        width: '640',
+        videoId: token,
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange':  count
+        }
+      });
+    }
+
+    function onPlayerReady(event){
+      event.target.playVideo();
+    }
+
+
+    //좌표정보
       var token;
       var timeStamp;
       var white = [];
@@ -99,7 +157,7 @@
         $.ajax({
           type: "POST",
           url: "http://127.0.0.1:5000//request",
-          data: JSON.stringify({"WHITE" : white, "YELLOW" : yellow, "GREEN" : green}),
+          data: JSON.stringify({"WHITE" : white, "YELLOW" : yellow, "GREEN" : green,"TITLE" :" {{ title }} " }),
           contentType: "application/json; charset=utf-8",
           dataType: "JSON",
           success : function(result){
@@ -109,35 +167,6 @@
             console.log(xtr +":"+status+":"+error);
           }
         })
-      }
-
-      function iframeCall(){
-          // 2. This code loads the IFrame Player API code asynchronously.
-          var tag = document.createElement('script');
-          tag.src = "https://www.youtube.com/iframe_api";
-          var firstScriptTag = document.getElementsByTagName('script')[0];
-          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-          // 3. This function creates an <iframe> (and YouTube player)
-          //    after the API code downloads.
-          var player;
-          var url_title = document.getElementById('movie_title').value
-      }
-
-      function onYouTubeIframeAPIReady() {
-        player = new YT.Player('player', {
-          height: '360',
-          width: '640',
-          videoId: token,
-          events: {
-            'onReady': onPlayerReady,
-            'onStateChange':  count
-          }
-        });
-      }
-
-      function onPlayerReady(event){
-        event.target.playVideo();
       }
 
       // 카운팅 / 관리
@@ -151,7 +180,7 @@
         console.log(videoLength);
         var sp = document.getElementById('space');
         var period = parseFloat(document.getElementById("max_time").value);
-        document.getElementById("cur").value = time.toFixed(0);
+        //document.getElementById("cur").value = time.toFixed(0);
         var p;
 
         if (time != 0 && time != NaN && point != ""){

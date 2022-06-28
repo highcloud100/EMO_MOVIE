@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+  <META HTTP-EQUIV="Expires" CONTENT="-1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+ 
+  
+  <!-- CSS only -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <!-- JavaScript Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  
+  <style>
+
+    .card:hover { cursor: pointer; }
+
+    body{
+      text-align: center;
+      font-weight: bold;
+    }
+    img{
+      height: 350px;
+      width: 110px;
+   
+      max-width: 16em;
+      margin: 5px auto;
+
+    }
+    .card-title{
+      font-family: 'Whisper', cursive;
+      font-weight: 1000;
+      font-size: 1em;
+    }
+    .card-text{
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    .card{
+      margin: 10px;
+    }
+    nav{
+      
+      font-weight: bold;
+      font-size: 24px;
+    }
+  </style>
+
+</head>
+<body>
+
+  <p></p>
+  <p></p>
+  <div class="row row-cols-2 row-cols-md-4 g-0">
+    {% for n in mlist %}
+    <div class="col">
+      <div class="card" onclick="sendPost(this)"">
+          <img src="/static/{{n[0]}}.png" class="card-img-top" alt="?-?">
+        </a>
+        <div class="card-body">
+          <h5 class="card-title">{{n[0]}}</h5>
+          <form action="{{url_for('upload_poster')}}" method="post" enctype="multipart/form-data">
+            <input type="text" name="title" hidden value="{{n[0]}}">
+            <input type="file" name="file">
+            <input type="password" name="pwd" >
+            <input type="submit">
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <ul>
+
+
+</body>
+</html>
