@@ -81,14 +81,14 @@
           <img src="/static/{{n[0]}}.png" class="card-img-top" alt="?-?">
         </a>
         <div class="card-body">
-          <h5 class="card-title">{{n[0]}}</h5>
+          <h5 class="card-title">"{{n[0]}}"</h5>
         </div>
       </div>
     </div>
     {% endfor %}
   </div>
   <ul>
-
+    
   <script>
     url = "{{url_for('movie')}}"
     function sendPost(obj){
