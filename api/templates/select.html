@@ -77,11 +77,11 @@
   <div class="row row-cols-2 row-cols-md-4 g-0">
     {% for n in mlist %}
     <div class="col">
-      <div class="card" onclick="sendPost(this)"">
+      <div class="card" onclick="sendPost(this)">
           <img src="/static/{{n[0]}}.png" class="card-img-top" alt="?-?">
         </a>
         <div class="card-body">
-          <h5 class="card-title">"{{n[0]}}"</h5>
+          <h5 class="card-title">{{n[0]}}</h5>
         </div>
       </div>
     </div>
@@ -100,7 +100,7 @@
       var titleInfo = document.createElement('input');
       titleInfo.setAttribute('type', 'hidden');
       titleInfo.setAttribute('name','title');
-      titleInfo.setAttribute('value',obj.innerText);
+      titleInfo.setAttribute('value',obj.children[1].children[0].innerText);
       form.appendChild(titleInfo);
       document.body.appendChild(form);
       form.submit();
