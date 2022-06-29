@@ -206,6 +206,6 @@ def create_app(test_config=None):
 
 # set FLASK_APP=app
 # set FLASK_ENV=development
-# set APP_CONFIG_FILE=C:\PROJECT\EMO_MOVIE_PROJECT\EMO_MOVIE\api\config\devel.py
+# set APP_CONFIG_FILE=E:\-\2022-1\인턴십\EMO_MOVIE\EMO_MOVIE\api\config\devel.py
 
 #mysql-connector

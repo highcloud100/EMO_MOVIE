@@ -10,11 +10,12 @@
         display:grid;
         justify-items: center;
         grid-template-columns: 1fr 1fr;
+        grid-template-rows: 400px 400px 165px;
         grid-column-gap: 20px;
       }
     }
     @media screen and (max-width: 1100px) {
-      body{ background-color: lightgreen; }
+      
       .container{
         display:grid;
         justify-items: center;
@@ -44,9 +45,9 @@
     <script src="http://code.jquery.com/jquery-latest.js"></script>
     <h1 style="font-family: 'Whisper', cursive;">{{ title }}</h1>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-    <br>
     <div class="container">
       <div class="item">
+        <p></p>
           <div id="player"></div>
       </div>
       <div class="item">
@@ -55,8 +56,9 @@
           <!--  
           <label for="cur">현재시간</label>
             <input type="text" id="cur">-->
+            <p></p>
             <label for="pos">현재좌표</label>
-            <input type="int" id="pos">
+            <input type="int" id="pos" >
           </form>
           <br>
           <div>
@@ -66,8 +68,11 @@
           </div>
         </div>
     </div>
+    
       <div class="item">
         <form methd="post">
+          <p></p>
+          
           <label for="max_pos">최대 좌표 변수 (초기값 5)</label>
             <input type="int" id="max_pos" value=5>
             <label for="max_cur">time stamp</label>
@@ -75,43 +80,8 @@
         </form>
       </div>
     </div>
-
-
+    
     <script>
-      //js 파일 나중에 따로 만들기
-
-      //Youtube
-    function iframeCall(){
-      // 2. This code loads the IFrame Player API code asynchronously.
-      var tag = document.createElement('script');
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-      // 3. This function creates an <iframe> (and YouTube player)
-      //    after the API code downloads.
-      var player;
-      var url_title = document.getElementById('movie_title').value
-    }
-
-    function onYouTubeIframeAPIReady() {
-      player = new YT.Player('player', {
-        height: '360',
-        width: '640',
-        videoId: token,
-        events: {
-          'onReady': onPlayerReady,
-          'onStateChange':  count
-        }
-      });
-    }
-
-    function onPlayerReady(event){
-      event.target.playVideo();
-    }
-
-
-    //좌표정보
       var token;
       var timeStamp;
       var white = [];
@@ -157,7 +127,7 @@
         $.ajax({
           type: "POST",
           url: "http://127.0.0.1:5000//request",
-          data: JSON.stringify({"WHITE" : white, "YELLOW" : yellow, "GREEN" : green,"TITLE" :" {{ title }} " }),
+          data: JSON.stringify({"WHITE" : white, "YELLOW" : yellow, "GREEN" : green}),
           contentType: "application/json; charset=utf-8",
           dataType: "JSON",
           success : function(result){
@@ -167,6 +137,35 @@
             console.log(xtr +":"+status+":"+error);
           }
         })
+      }
+
+      function iframeCall(){
+          // 2. This code loads the IFrame Player API code asynchronously.
+          var tag = document.createElement('script');
+          tag.src = "https://www.youtube.com/iframe_api";
+          var firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+          // 3. This function creates an <iframe> (and YouTube player)
+          //    after the API code downloads.
+          var player;
+          var url_title = document.getElementById('movie_title').value
+      }
+
+      function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+          height: '360',
+          width: '640',
+          videoId: token,
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange':  count
+          }
+        });
+      }
+
+      function onPlayerReady(event){
+        event.target.playVideo();
       }
 
       // 카운팅 / 관리
@@ -180,7 +179,7 @@
         console.log(videoLength);
         var sp = document.getElementById('space');
         var period = parseFloat(document.getElementById("max_time").value);
-        //document.getElementById("cur").value = time.toFixed(0);
+        document.getElementById("cur").value = time.toFixed(0);
         var p;
 
         if (time != 0 && time != NaN && point != ""){
