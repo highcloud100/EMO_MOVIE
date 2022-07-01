@@ -234,7 +234,7 @@
       function count(){
         var point = document.getElementById('pos').value;
         var time =  parseFloat((player.playerInfo.currentTime));
-        var videoLength = parseFloat(player.getDuration());
+        var videoLength = parseInt(player.getDuration());
         console.log(videoLength);
         var sp = document.getElementById('space');
         var period = parseFloat(document.getElementById("max_time").value);
