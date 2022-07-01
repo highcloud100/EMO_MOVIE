@@ -2,58 +2,153 @@
 <html>
   <head>
   <meta charset="UTF-8">
-    <style>
-      #space{
-        background-color: #c8c8c8;
-        width: 400px;
-        height: 400px;
-      }
-      #point{
-        border: 1px solid black;
-        width: 198px;
-        height: 198px;
-      }
-      #click_space{
-        width: 400px;
-        height: 400px;
-      }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    </style>
+  <style>
+    
+    @media screen and (min-width: 1100px) {
+      .container{
+        display:grid;
+        justify-items: center;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 400px 400px 165px;
+        grid-column-gap: 20px;
+      }
+    }
+    @media screen and (max-width: 1100px) {
+      
+      .container{
+        display:grid;
+        justify-items: center;
+        grid-template-columns: auto;
+        grid-column-gap: 20px;
+      }
+    }
+
+    #space{
+      background-color: #c8c8c8;
+    
+      width: 400px;
+      height: 400px;
+    }
+
+    #coor:hover{ 
+      cursor : pointer; 
+    
+    }
+
+    #circle {
+      position: absolute;
+      pointer-events: none;
+      top: 0;
+      left: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #ee6c4d;
+      opacity: 0.4;
+      transform: translate(-50%, -50%);
+      font-size: 0.5rem;
+      visibility: hidden;
+    }   
+
+    #pointer{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: black;
+      visibility: hidden;
+    }
+    
+    #my_div {
+      background: green;
+      height: 100px;
+      width: 100px;
+    }
+    
+  </style>
+
   </head>
   <body>
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-    <h1>{{ title }}</h1>
+    <h1 style="font-family: 'Whisper', cursive;">{{ title }}</h1>
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-    <br>
-    <div style="width:45%; height: 150px; border:1px; float:left">
-      <div id="player"></div>
-    </div>
-    <div style="width:55%; float:right">
-      <form>
-      <label for="cur">현재시간</label>
-        <input type="text" id="cur">
-        <label for="pos">현재좌표</label>
-        <input type="int" id="pos">
-      </form>
-      <br>
-      <div>
-        <div id="space" style="margin-left:65px" onclick="clicked(event)">
-            <!--<img src="/Users/gimseong-eon/Desktop/proto/sad.png" alt="candy image">-->
+    <div class="container">
+      <div class="item">
+        <p></p>
+          <div id="player"></div>
+      </div>
+      <div class="item">
+        <div class= "BOX">
+          <form>
+          <!--  
+          <label for="cur">현재시간</label>
+            <input type="text" id="cur">-->
+            <p></p>
+            <label for="pos">현재좌표</label>
+            <input type="int" id="pos" >
+          </form>
+          <br>
+          <div>
+            <div id="space" onclick="clicked(event)" onmouseout="mouseOut()" onmouseover="mouseIn()">
+              <img id="coor" src="https://i.ibb.co/28K6hQJ/export-removebg-preview.png" alt="export-removebg-preview" border="0">
+              <div id="circle">좌표</div>
+              <div id="pointer"></div> <!--포인터-->
+            </div>
+          </div>
         </div>
       </div>
-      <div id ="save" style="overflow:auto; width:500px; height:150px;">
+    
+      <div class="item">
+        <form methd="post">  
+          <label for="max_pos">최대 좌표 변수 (초기값 5)</label>
+            <input type="int" id="max_pos" value=5>
+            <br>
+            <label for="max_cur">time stamp</label>
+            <input type="int" id="max_time" value=5>
+        </form>
       </div>
-      <form methd="post">
-      <label for="max_pos">최대 좌표 변수 (초기값 5)</label>
-        <input type="int" id="max_pos" value=5>
-        <label for="max_cur">시간 변수</label>
-        <input type="int" id="max_time" value=5>
-      </form>
-
+    </div>
+    <div id='result'>
     </div>
 
 
     <script>
+      //마우스 따라가는 원
+      const circle = document.querySelector("#circle");
+
+      document.addEventListener("mousemove", (e) => {
+          const mouseX = e.clientX;
+          const mouseY = e.clientY;
+          circle.style.left = mouseX + 'px';
+          circle.style.top = mouseY + 'px';
+      });
+
+      function mouseIn(){   
+        document.getElementById('circle').style.visibility = "visible";
+      }
+      function mouseOut(){
+        document.getElementById('circle').style.visibility = "hidden";
+      }
+     
+      // 클릭되면
+      var clickFlag = 0;
+      function clicked(e){
+        range = 200/document.getElementById("max_pos").value;
+        x = (e.offsetX-200)/range;
+        y = (-1*(e.offsetY-200))/range;
+        document.getElementById('pos').value = x + ", " + y;
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        clickFlag = 1;
+        document.getElementById("pointer").style.visibility = "visible";
+        document.getElementById("pointer").style.left = mouseX + 'px';
+        document.getElementById("pointer").style.top = mouseY + 'px';
+      }
+
       var token;
       var timeStamp;
       var white = [];
@@ -84,15 +179,6 @@
         catch(error){
           console.log(error);
         }
-
-      }
-
-      // 클릭되면
-      function clicked(e){
-        range = 200/document.getElementById("max_pos").value
-        x = (e.offsetX-200)/range;
-        y = (-1*(e.offsetY-200))/range;
-        document.getElementById('pos').value = x + ", " + y;
       }
 
       // 좌표보내기
@@ -136,15 +222,23 @@
           }
         });
       }
+
+      function onPlayerReady(event){
+        event.target.playVideo();
+      }
+
       // 카운팅 / 관리
       //일단 잘 모르겠어서 green : timestamp +- period(입력한 시간) 구간 / yellow : timestamp +- (입력한 시간+3) 구간으로 설정함 yellow, green 앞뒤로 각각 연구자가 입력할 수 있어야 하나..?
-      var i = 0
+      var i = 0;
+      var check = 0;
       function count(){
         var point = document.getElementById('pos').value;
         var time =  parseFloat((player.playerInfo.currentTime));
+        var videoLength = parseFloat(player.getDuration());
+        console.log(videoLength);
         var sp = document.getElementById('space');
         var period = parseFloat(document.getElementById("max_time").value);
-        document.getElementById("cur").value = time.toFixed(0);
+        //document.getElementById("cur").value = time.toFixed(2);
         var p;
 
         if (time != 0 && time != NaN && point != ""){
@@ -154,30 +248,36 @@
         if((time < timeStamp[i] - period && time > timeStamp[i] - period- 3)
         || (time < timeStamp[i] + period + 3 && time > timeStamp[i] + period)){
           sp.style.backgroundColor = "#FFB914";
-          if ( p != undefined){
-          yellow.push(p);
+          if ( p != undefined && clickFlag==1){
+            yellow.push(p);
+            clickFlag = 0;
           }
         }
         else if(time < timeStamp[i] + period && time >= timeStamp[i] - period){
         sp.style.backgroundColor = "#4AB34A";
-          if ( p != undefined){
-          green.push(p);
+        if ( p != undefined && clickFlag==1){
+            green.push(p);
+            clickFlag = 0;
           }
         }
         else {
           sp.style.backgroundColor = "#c8c8c8";
-          if ( p != undefined){
-          white.push(p);
+          if ( p != undefined && clickFlag==1){
+            white.push(p);
+            clickFlag = 0;
           }
         }
 
         if (time > timeStamp[i] + period + 3){
           i++;
-          if (i == timeStamp.length){
+        }
+        if (time.toFixed(0) == videoLength - 2){    //영상 끝나기 1초 전까지 측정합니다.
+          if (check == 0){
             console.log(white);
             console.log(green);
             console.log(yellow);
-            send_point();         //마지막 타임스탬프에서 좌표 저장을 끝마치고 서버로 좌표를 보냅니다.
+            send_point();        //영상 마지막까지 좌표 저장을 끝마치고 서버로 좌표를 보냅니다.
+            check = 1;         //서버에 중복해서 보내지 않도록 
           }
         }
       }
@@ -187,9 +287,19 @@
       function onPlayerReady(event) {
         event.target.playVideo();
       }
-
-      //
     </script>
-
   </body>
+
+  <script>
+    const div = document.getElementById('coor');
+    const result = document.getElementById('circle');
+
+    div.addEventListener('mousemove', (e) => {
+      range = 200/document.getElementById("max_pos").value
+        x = (e.offsetX-200)/range;
+        y = (-1*(e.offsetY-200))/range;
+      result.innerText= "x : " +  x.toFixed(2) + ", y : " + y.toFixed(2);
+    });
+  </script>
+
 </html>
