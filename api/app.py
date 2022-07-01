@@ -1,3 +1,4 @@
+from email.errors import NoBoundaryInMultipartDefect
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 from sqlalchemy import create_engine
 from datetime import timedelta
@@ -121,7 +122,9 @@ def create_app(test_config=None):
     if request.method == 'POST' and request.form['pwd'] == "1234":
       f = request.files['file']
       print(app.root_path)
-      f.save( app.root_path + '/static/"'+ secure_filename(request.form['title']+'.png"'))
+      name = request.form['title']+ '.png'
+      print("저장 이름" + name)
+      f.save( app.root_path + '/static/'+ name)
     return redirect(url_for('render_file'))
   
   @app.route('/logout') #마지막에
@@ -204,7 +207,7 @@ def create_app(test_config=None):
 
 # set FLASK_APP=app
 # set FLASK_ENV=development
-# set APP_CONFIG_FILE=C:\PROJECT\EMO_MOVIE_PROJECT\EMO_MOVIE\api\config\devel.py
+# set APP_CONFIG_FILE=C:\PROJECT\EMO_MOVIE_PROJECT\EMO_MOVIE\api\config\product.py
 # export APP_CONFIG_FILE=/home/affctiv/projects/EMO_MOVIE/api/config/product.py
 
 #mysql-connector-python
