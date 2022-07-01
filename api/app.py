@@ -121,7 +121,7 @@ def create_app(test_config=None):
     if request.method == 'POST' and request.form['pwd'] == "1234":
       f = request.files['file']
       print(app.root_path)
-      f.save( app.root_path + '/static/'+ secure_filename(request.form['title']+'.png'))
+      f.save( app.root_path + '/static/"'+ secure_filename(request.form['title']+'.png"'))
     return redirect(url_for('render_file'))
   
   @app.route('/logout') #마지막에
