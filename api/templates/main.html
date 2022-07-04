@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    @media screen and (min-width: 1100px) {
+    
+    @media screen and (min-width: 1024px) {
       .container{
         display:grid;
         justify-items: center;
@@ -14,7 +15,7 @@
         grid-column-gap: 20px;
       }
     }
-    @media screen and (max-width: 1100px) {
+    @media screen and (max-width: 1023px) {
       
       .container{
         display:grid;
@@ -26,13 +27,19 @@
 
     #space{
       background-color: #c8c8c8;
+    
       width: 400px;
       height: 400px;
     }
 
     #coor:hover{ 
-      cursor : pointer; 
-      
+      cursor : pointer;
+    }
+
+    #coor{
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
     }
 
     #circle {
@@ -47,8 +54,20 @@
       opacity: 0.4;
       transform: translate(-50%, -50%);
       font-size: 0.5rem;
+      visibility: hidden;
     }   
 
+    #pointer{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background-color: black;
+      visibility: hidden;
+    }
+    
     #my_div {
       background: green;
       height: 100px;
@@ -75,17 +94,18 @@
             <input type="text" id="cur">-->
             <p></p>
             <label for="pos">현재좌표</label>
-            <input type="int" id="pos" >
+            <input type="int" id="pos" name="val" readonly>
           </form>
           <br>
           <div>
-            <div id="space" onclick="clicked(event)">
+            <div id="space" onclick="clicked(event)" onmouseout="mouseOut()" onmouseover="mouseIn()">
               <img id="coor" src="https://i.ibb.co/28K6hQJ/export-removebg-preview.png" alt="export-removebg-preview" border="0">
               <div id="circle">좌표</div>
+              <div id="pointer"></div> <!--포인터-->
             </div>
           </div>
         </div>
-    </div>
+      </div>
     
       <div class="item">
         <form methd="post">  
@@ -112,14 +132,40 @@
           circle.style.top = mouseY + 'px';
       });
 
+      function mouseIn(){   
+        document.getElementById('circle').style.visibility = "visible";
+      }
+      function mouseOut(){
+        document.getElementById('circle').style.visibility = "hidden";
+      }
+     
       // 클릭되면
+      var clickFlag = 0;
       function clicked(e){
-        range = 200/document.getElementById("max_pos").value
+        range = 200/document.getElementById("max_pos").value;
         x = (e.offsetX-200)/range;
         y = (-1*(e.offsetY-200))/range;
         document.getElementById('pos').value = x + ", " + y;
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+        clickFlag = 1;
+        document.getElementById("pointer").style.visibility = "visible";
+        document.getElementById("pointer").style.left = mouseX + 'px';
+        document.getElementById("pointer").style.top = mouseY + 'px';
       }
 
+
+      // 점 찍고 2초 뒤에 사라짐
+      var clickTime = 0;
+      function pointer_count(){
+        if (document.getElementById("pointer").style.visibility == "visible"){
+          clickTime++;
+          if (clickTime == 2){
+            document.getElementById("pointer").style.visibility = "hidden";
+            clickTime = 0;
+          }
+        }
+      }setInterval(pointer_count, 1000);
 
       var token;
       var timeStamp;
@@ -132,7 +178,7 @@
       //json 파일만 가져올게요~
       function getPlayinfo(){
         var MOVIE_ID = document.querySelector('h1').innerText;
-        const response = fetch('http://127.0.0.1:5000/movie/' + MOVIE_ID);
+        const response = fetch("{{ url_for('movie') }}/" + MOVIE_ID);
         return response.then(res => res.json());
       }
 
@@ -206,11 +252,11 @@
       function count(){
         var point = document.getElementById('pos').value;
         var time =  parseFloat((player.playerInfo.currentTime));
-        var videoLength = parseFloat(player.getDuration());
+        var videoLength = parseInt(player.getDuration());
         console.log(videoLength);
         var sp = document.getElementById('space');
         var period = parseFloat(document.getElementById("max_time").value);
-        document.getElementById("cur").value = time.toFixed(0);
+        //document.getElementById("cur").value = time.toFixed(2);
         var p;
 
         if (time != 0 && time != NaN && point != ""){
@@ -220,20 +266,23 @@
         if((time < timeStamp[i] - period && time > timeStamp[i] - period- 3)
         || (time < timeStamp[i] + period + 3 && time > timeStamp[i] + period)){
           sp.style.backgroundColor = "#FFB914";
-          if ( p != undefined){
-          yellow.push(p);
+          if ( p != undefined && clickFlag==1){
+            yellow.push(p);
+            clickFlag = 0;
           }
         }
         else if(time < timeStamp[i] + period && time >= timeStamp[i] - period){
         sp.style.backgroundColor = "#4AB34A";
-          if ( p != undefined){
-          green.push(p);
+        if ( p != undefined && clickFlag==1){
+            green.push(p);
+            clickFlag = 0;
           }
         }
         else {
           sp.style.backgroundColor = "#c8c8c8";
-          if ( p != undefined){
-          white.push(p);
+          if ( p != undefined && clickFlag==1){
+            white.push(p);
+            clickFlag = 0;
           }
         }
 
@@ -267,7 +316,7 @@
       range = 200/document.getElementById("max_pos").value
         x = (e.offsetX-200)/range;
         y = (-1*(e.offsetY-200))/range;
-      result.innerHTML= x + ", " + y;
+      result.innerText= "x : " +  x.toFixed(2) + ", y : " + y.toFixed(2);
     });
   </script>
 
