@@ -15,8 +15,6 @@ DB_URL = f"mysql+mysqlconnector://{db['user']}:{db['password']}@{db['host']}:{db
 
 SECRET_KEY = b'\xd1]0 CV\x9a\rB`}\x98\xa2z3\xca'
 
-os.chdir("../")
-BASE_DIR = os.getcwd()
 
 dictConfig({
     'version': 1,
@@ -29,7 +27,7 @@ dictConfig({
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/myproject.log'),
+            'filename':'C:/PROJECT/EMO_MOVIE_PROJECT/EMO_MOVIE/api/logs/myproject.log' ,
             'maxBytes': 1024 * 1024 * 5,  # 5 MB
             'backupCount': 5,
             'formatter': 'default',

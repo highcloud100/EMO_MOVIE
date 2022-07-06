@@ -200,7 +200,10 @@ def create_app(test_config=None):
         print(m)
         return f"<script>alert('error'); location.href='/select'</script>"
 
-
+  @app.route("/er")
+  def index():
+    3/0
+    redirect("/")
   return app
 
 
