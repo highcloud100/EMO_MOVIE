@@ -141,6 +141,7 @@ def create_app(test_config=None):
       green = data['GREEN']
       title = data['TITLE']
 
+      
       #white
       w_time = []
       point_White_x = []
@@ -149,7 +150,7 @@ def create_app(test_config=None):
           x = white[i]
           ddate = x.split(":")
           point = ddate[1].split(", ")
-          w_time.append(ddate[0])
+          w_time.append(str(round((float)(ddate[0]),2)))
           point_White_x.append(point[0])
           point_White_y.append(point[1])
 
@@ -165,7 +166,7 @@ def create_app(test_config=None):
           x = yellow[i]
           ddate = x.split(":")
           point = ddate[1].split(", ")
-          y_time.append(ddate[0])
+          y_time.append(str(round((float)(ddate[0]),2)))
           point_Yellow_x.append(point[0])
           point_Yellow_y.append(point[1])
 
@@ -179,7 +180,7 @@ def create_app(test_config=None):
           x = green[i]
           ddate = x.split(":")
           point = ddate[1].split(", ")
-          g_time.append(ddate[0])
+          g_time.append(str(round((float)(ddate[0]),2)))
           point_Green_x.append(point[0])
           point_Green_y.append(point[1])
 
