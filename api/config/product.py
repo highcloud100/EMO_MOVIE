@@ -27,7 +27,7 @@ dictConfig({
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename':'C:/PROJECT/EMO_MOVIE_PROJECT/EMO_MOVIE/api/logs/myproject.log' , #'filename':'/home/affctiv/projects/EMO_MOVIE/api/logs/logfile.log' ,
+            'filename':'/home/affctiv/projects/EMO_MOVIE/api/logs/logfile.log' ,
             'maxBytes': 1024 * 1024 * 5,  # 5 MB
             'backupCount': 5,
             'formatter': 'default',
