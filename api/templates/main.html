@@ -53,12 +53,6 @@
       visibility: hidden;
       pointer-events: none;
     }
-    
-    #my_div {
-      background: green;
-      height: 100px;
-      width: 100px;
-    }
 
     @media screen and (min-width: 1100px) {
       .container{
@@ -102,8 +96,8 @@
           </form>
           <br>
           <div>
-            <div id="space" onclick="clicked(event)" onmouseout="mouseOut()" onmouseover="mouseIn()">
-              <img id="coor" src="https://i.ibb.co/28K6hQJ/export-removebg-preview.png" alt="export-removebg-preview" border="0">
+            <div draggable="false" id="space" onclick="clicked(event)" onmouseout="mouseOut()" onmouseover="mouseIn()">
+              <img draggable="false" id="coor" src="https://i.ibb.co/28K6hQJ/export-removebg-preview.png" alt="export-removebg-preview" border="0">
               <div id="circle">좌표</div>
               <div id="pointer"></div> <!--포인터-->
             </div>
