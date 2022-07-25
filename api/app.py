@@ -24,6 +24,17 @@ def create_app(test_config=None):
   database = create_engine(app.config['DB_URL'], encoding='utf-8', max_overflow = 0)
   app.database = database
   
+  @app.route('/adminPass')
+  def Pass():
+    session.clear()
+    user = userInfo('Admin', 'a', 'a','a','a','a')
+    #세션 저장
+    session['user'] = user.__dict__
+    objects = app.database.execute("select title from movie_info").fetchall() #db에서 영화 리스트 뽑아옴
+    print(objects)
+    return render_template('select.html', mlist=objects, username = 'Admin') #home.html에 반환
+
+
   @app.route('/') # 디폴트 화면
   def login():
     return render_template('sign_up.html')
@@ -132,8 +143,12 @@ def create_app(test_config=None):
     # session.pop('usernmae', None) 이것도 가능?
     return redirect("/")
 
-  @app.route('/request', methods=['GET', 'POST'])
+  @app.route('/request', methods=['POST'])
   def timestamp():
+      if session['user']['id'] == 'Admin': #admin 처리
+        print('admin is running')
+        return redirect("/adminPass")
+
       data = request.get_json()
       white = data['WHITE']
       yellow = data['YELLOW']
