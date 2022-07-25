@@ -1,11 +1,11 @@
 from config.default import *
 
 db = {
-      'user' : 'baek',
-      'password' : 'baekMy123!',
-      'host': 'edu.sky100.kr',
+      'user' : 'emo',
+      'password' : 'EMOmovie123!',
+      'host': '165.246.141.212',
       'port' : 20100,
-      'database' : 'emo_movie'
+      'database' : 'emo_db'
 }
 
 DB_URL = f"mysql+mysqlconnector://{db['user']}:{db['password']}@{db['host']}:{db['port']}/{db['database']}?charset=utf8"
