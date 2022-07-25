@@ -4,6 +4,16 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-T1V2LTB6JX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+  
+    gtag('config', 'G-T1V2LTB6JX');
+  </script>
+    
   <title>Document</title>
  
   
@@ -61,8 +71,8 @@
             <a class="nav-link active" aria-current="page" >피험자 : {{username}} / </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{url_for('logout')}}" style="color: white; background-color: rgb(166, 50, 50); border-radius: 20px">실험종료</a>
-          </li>
+            <a class="nav-link active" aria-current="page" href="{{url_for('logout')}}" style="color: red;">실험종료</a>
+          </li> 
         </ul>
         <!-- <form class="d-flex">
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -77,7 +87,7 @@
   <div class="row row-cols-2 row-cols-md-4 g-0">
     {% for n in mlist %}
     <div class="col">
-      <div class="card" onclick="sendPost(this)"">
+      <div class="card" onclick="sendPost(this)">
           <img src="/static/{{n[0]}}.png" class="card-img-top" alt="?-?">
         </a>
         <div class="card-body">
@@ -88,9 +98,9 @@
     {% endfor %}
   </div>
   <ul>
-
+    
   <script>
-    url = " {{ url_for('movie') }} "
+    url = "{{url_for('movie')}}"
     function sendPost(obj){
       var form = document.createElement('form');
       form.setAttribute('method', 'post');
@@ -100,7 +110,7 @@
       var titleInfo = document.createElement('input');
       titleInfo.setAttribute('type', 'hidden');
       titleInfo.setAttribute('name','title');
-      titleInfo.setAttribute('value',obj.innerText);
+      titleInfo.setAttribute('value',obj.children[1].children[0].innerText);
       form.appendChild(titleInfo);
       document.body.appendChild(form);
       form.submit();

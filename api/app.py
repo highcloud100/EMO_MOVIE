@@ -1,3 +1,4 @@
+from email.errors import NoBoundaryInMultipartDefect
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
 from sqlalchemy import create_engine
 from datetime import timedelta
@@ -43,8 +44,7 @@ def create_app(test_config=None):
   @app.route('/movie', methods=['POST'])  #home.html에서 영화 선택시 post 
   def movie():
     Title = request.form['title']
-    print(Title)
-    return render_template('main.html', title = Title) #main.html 에 영화 제목 반환
+    return render_template('main2.html', title = Title) #main.html 에 영화 제목 반환
 
 
   #db에서 영화 정보 불러오기
@@ -90,7 +90,7 @@ def create_app(test_config=None):
               app.database.execute(
                   f"INSERT INTO subject_info(name, gender, age, email) VALUES(\'{username}\',\'{gender}\' ,{age},\'{email}\')")
 
-              obj =  app.database.execute(f"select * from subject_info where name=\'{username}\';").fetchone()
+              obj =  app.database.execute(f"select * from subject_info where name=\'{username}\' and age={age} and email=\'{email}\';").fetchone()
               user = userInfo(obj[0], obj[1], obj[2], obj[3],obj[4],obj[5])
               #세션 저장
               session['user'] = user.__dict__
@@ -122,7 +122,9 @@ def create_app(test_config=None):
     if request.method == 'POST' and request.form['pwd'] == "1234":
       f = request.files['file']
       print(app.root_path)
-      f.save( app.root_path + '/static/'+ secure_filename(request.form['title']+'.png'))
+      name = request.form['title']+ '.png'
+      print("저장 이름" + name)
+      f.save( app.root_path + '/static/'+ name)
     return redirect(url_for('render_file'))
   
   @app.route('/logout') #마지막에
@@ -138,74 +140,78 @@ def create_app(test_config=None):
       yellow = data['YELLOW']
       green = data['GREEN']
       title = data['TITLE']
+
+      
+      #white
+      w_time = []
+      point_White_x = []
+      point_White_y = []
+      for i in range(len(white)):
+          x = white[i]
+          ddate = x.split(":")
+          point = ddate[1].split(", ")
+          w_time.append(str(round((float)(ddate[0]),2)))
+          point_White_x.append(point[0])
+          point_White_y.append(point[1])
+
+      white_x = ','.join(point_White_x)
+      white_y = ','.join(point_White_y)
+      w_time = ','.join(w_time)
+
+
+      y_time = []
+      point_Yellow_x = []
+      point_Yellow_y = []
+      for i in range(len(yellow)):
+          x = yellow[i]
+          ddate = x.split(":")
+          point = ddate[1].split(", ")
+          y_time.append(str(round((float)(ddate[0]),2)))
+          point_Yellow_x.append(point[0])
+          point_Yellow_y.append(point[1])
+
+      yellow_x = ','.join(point_Yellow_x)
+      yellow_y = ','.join(point_Yellow_y)
+      y_time = ','.join(y_time)
+
+      g_time = []
+      point_Green_x, point_Green_y = [], []
+      for i in range(len(green)):
+          x = green[i]
+          ddate = x.split(":")
+          point = ddate[1].split(", ")
+          g_time.append(str(round((float)(ddate[0]),2)))
+          point_Green_x.append(point[0])
+          point_Green_y.append(point[1])
+
+      green_x = ','.join(point_Green_x)
+      green_y = ','.join(point_Green_y)
+      g_time = ','.join(g_time)
+
+      print(white_x, '\n',  white_y,'\n', yellow_x, '\n', yellow_y, '\n', green_x, '\n', green_y, '\n')
+
+
+
+      #subjectID, param 해결해야함
       try:
-          
-        #하나만
-        # x = white[0]
-        # print(x)
-        # ddate = x.split(":")
-        # point = ddate[1].split(", ")
-        # print(ddate)
-        # print(point)
-
-        #white
-        time = []
-        point_White_x = []
-        point_White_y = []
-        for i in range(len(white)):
-            x = white[i]
-            ddate = x.split(":")
-            print(ddate[0])
-            point = ddate[1].split(", ")
-            print(point)
-            time.append(ddate[0])
-            point_White_x.append(float(point[0]))
-            point_White_y.append(float(point[1]))
-
-        white_x = sum(point_White_x) / (len(white))
-        white_y = sum(point_White_y) / (len(white))
-
-
-        point_Yellow_x = []
-        point_Yellow_y = []
-        for i in range(len(yellow)):
-            x = yellow[i]
-            ddate = x.split(":")
-            point = ddate[1].split(", ")
-            time.append(ddate[0])
-            point_Yellow_x.append(float(point[0]))
-            point_Yellow_y.append(float(point[1]))
-
-        yellow_x = sum(point_Yellow_x) / (len(yellow))
-        yellow_y = sum(point_Yellow_y) / (len(yellow))
-
-        point_Green_x, point_Green_y = [], []
-        for i in range(len(green)):
-            x = green[i]
-            ddate = x.split(":")
-            point = ddate[1].split(", ")
-            time.append(ddate[0])
-            point_Green_x.append(float(point[0]))
-            point_Green_y.append(float(point[1]))
-
-        green_x = sum(point_Green_x) / (len(green))
-        green_y = sum(point_Green_y) / (len(green))
-
-        # date 제외, 좌표 찍은 시간들은 column 만들어야 할 듯?
-        app.database.execute(f"INSERT INTO data(subjectID, movieTitle, white_x, white_y, yellow_x, yellow_y, green_x, green_y) \
-        VALUES(\'{session['username']}\', \'{title}\', {str(white_x)}, {str(white_y)}, {str(yellow_x)}, {str(yellow_y)}, {str(green_x)}, {str(green_y)})")
+        app.database.execute(f"INSERT INTO data(subjectID, movieTitle, param, white_time ,white_x, white_y, yellow_time,yellow_x, yellow_y, green_time, green_x, green_y) \
+        VALUES(\'{session['user']['id']}\', \'{title}\',{5}, \'{w_time}\' ,\'{white_x}\', \'{white_y}\', \'{y_time}\' , \'{yellow_x}\', \'{yellow_y}\', \'{g_time}\' ,\'{green_x}\', \'{green_y}\')")
         return redirect(url_for('movieSelect'))
-      except:
-        print("error")
+      except ValueError as m:
+        print(m)
         return f"<script>alert('error'); location.href='/select'</script>"
 
-
+  @app.route("/er")
+  def index():
+    3/0
+    redirect("/")
   return app
 
 
 
 # set FLASK_APP=app
 # set FLASK_ENV=development
-# set APP_CONFIG_FILE=E:\-\2022-1\인턴십\EMO_MOVIE\EMO_MOVIE\api\config\product.py
+# set APP_CONFIG_FILE=E:\-\2022-1\인턴십\NEWMAIN\EMO_MOVIE\api\config\product.py
+# export APP_CONFIG_FILE=E:\-\2022-1\인턴십\NEWMAIN\EMO_MOVIE\api\config\product.py
 
-#mysql-connector
+#mysql-connector-python
