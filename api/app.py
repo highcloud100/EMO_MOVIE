@@ -54,7 +54,7 @@ def create_app(test_config=None):
   @app.route('/movie', methods=['POST'])  #home.html에서 영화 선택시 post 
   def movie():
     Title = request.form['title']
-    return render_template('main2.html', title = Title) #main.html 에 영화 제목 반환
+    return render_template('main.html', title = Title) #main.html 에 영화 제목 반환
 
 
   #db에서 영화 정보 불러오기
