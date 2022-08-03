@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, redirect, render_template, request, session, url_for
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, engine_from_config
 from datetime import timedelta
 from werkzeug.utils import secure_filename
 
@@ -22,7 +22,7 @@ def create_app(test_config=None):
   app.config.from_envvar('APP_CONFIG_FILE')
   app.permanent_session_lifetime = timedelta(minutes=60) #세션 만료 시간 1시간
   database = create_engine(app.config['DB_URL'], encoding='utf-8')
-  app.database = database.connect()
+  app.database = database
   
   
   @app.route('/adminPass')
@@ -31,8 +31,9 @@ def create_app(test_config=None):
     user = userInfo('Admin', 'a', 'a','a','a','a')
     #세션 저장
     session['user'] = user.__dict__
-    objects = app.database.execute("select title from movie_info").fetchall() #db에서 영화 리스트 뽑아옴
-    print(objects)
+    with app.database.connect() as con:
+      objects = con.execute("select title from movie_info").fetchall() #db에서 영화 리스트 뽑아옴
+      print(objects)
     return render_template('select.html', mlist=objects, username = 'Admin') #home.html에 반환
 
 
@@ -45,8 +46,9 @@ def create_app(test_config=None):
   @app.route('/select')
   def movieSelect():
     if 'user' in session:
-      objects = app.database.execute("select title from movie_info").fetchall() #db에서 영화 리스트 뽑아옴
-      print(objects)
+      with app.database.connect() as con:
+        objects = con.execute("select title from movie_info").fetchall() #db에서 영화 리스트 뽑아옴
+        print(objects)
       return render_template('select.html', mlist=objects, username = session['user']['username']) #home.html에 반환
     else:
        return render_template('sign_up.html')
@@ -62,7 +64,8 @@ def create_app(test_config=None):
   @app.route("/movie/<string:title>",methods=['GET', 'POST'])
   def getMovie(title):
     #db에서 데이터 조회 후 json으로 반환
-    objects = app.database.execute(f"select * from movie_info where title = \'{title}\'").fetchall()
+    with app.database.connect() as con:
+      objects = con.execute(f"select * from movie_info where title = \'{title}\'").fetchall()
     if len(objects) == 0:
       return "not found"
     objects = objects[0] 
@@ -94,14 +97,17 @@ def create_app(test_config=None):
 
               print(username)  # 들어오나 확인
               print(gender)  
-              obj = app.database.execute(f"select * from subject_info where name=\'{username}\' and age={age} and email=\'{email}\';").fetchall()
+              with app.database.connect() as con:
+                obj = con.execute(f"select * from subject_info where name=\'{username}\' and age={age} and email=\'{email}\';").fetchall()
               if len(obj)>0:
                   raise Exception('이미 존재하는 정보입니다')
 
-              app.database.execute(
-                  f"INSERT INTO subject_info(name, gender, age, email) VALUES(\'{username}\',\'{gender}\' ,{age},\'{email}\')")
+              with app.database.connect() as con:
+                 con.execute(
+                    f"INSERT INTO subject_info(name, gender, age, email) VALUES(\'{username}\',\'{gender}\' ,{age},\'{email}\')")
 
-              obj =  app.database.execute(f"select * from subject_info where name=\'{username}\' and age={age} and email=\'{email}\';").fetchone()
+              with app.database.connect() as con:
+                obj =  con.execute(f"select * from subject_info where name=\'{username}\' and age={age} and email=\'{email}\';").fetchone()
               user = userInfo(obj[0], obj[1], obj[2], obj[3],obj[4],obj[5])
               #세션 저장
               session['user'] = user.__dict__
@@ -140,7 +146,6 @@ def create_app(test_config=None):
   
   @app.route('/logout') #마지막에
   def logout():
-    app.database.close()
     session.clear()
     # session.pop('usernmae', None) 이것도 가능?
     return redirect("/")
@@ -210,7 +215,8 @@ def create_app(test_config=None):
 
       #subjectID, param 해결해야함
       try:
-        app.database.execute(f"INSERT INTO data(subjectID, movieTitle, param, white_time ,white_x, white_y, yellow_time,yellow_x, yellow_y, green_time, green_x, green_y) \
+        with app.database.connect() as con:
+          con.execute(f"INSERT INTO data(subjectID, movieTitle, param, white_time ,white_x, white_y, yellow_time,yellow_x, yellow_y, green_time, green_x, green_y) \
         VALUES(\'{session['user']['id']}\', \'{title}\',{5}, \'{w_time}\' ,\'{white_x}\', \'{white_y}\', \'{y_time}\' , \'{yellow_x}\', \'{yellow_y}\', \'{g_time}\' ,\'{green_x}\', \'{green_y}\')")
         return redirect(url_for('movieSelect'))
       except ValueError as m:
