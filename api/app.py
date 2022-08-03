@@ -21,8 +21,9 @@ def create_app(test_config=None):
 
   app.config.from_envvar('APP_CONFIG_FILE')
   app.permanent_session_lifetime = timedelta(minutes=60) #세션 만료 시간 1시간
-  database = create_engine(app.config['DB_URL'], encoding='utf-8', max_overflow = 0)
-  app.database = database
+  database = create_engine(app.config['DB_URL'], encoding='utf-8')
+  app.database = database.connect()
+  
   
   @app.route('/adminPass')
   def Pass():
@@ -139,6 +140,7 @@ def create_app(test_config=None):
   
   @app.route('/logout') #마지막에
   def logout():
+    app.database.close()
     session.clear()
     # session.pop('usernmae', None) 이것도 가능?
     return redirect("/")
