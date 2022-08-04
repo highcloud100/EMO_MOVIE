@@ -2,6 +2,7 @@ from flask import Flask, jsonify, redirect, render_template, request, session, u
 from sqlalchemy import create_engine, engine_from_config
 from datetime import timedelta
 from werkzeug.utils import secure_filename
+import logging
 
 
 class userInfo():
@@ -21,7 +22,10 @@ def create_app(test_config=None):
 
   app.config.from_envvar('APP_CONFIG_FILE')
   app.permanent_session_lifetime = timedelta(minutes=60) #세션 만료 시간 1시간
-  database = create_engine(app.config['DB_URL'], encoding='utf-8')
+
+  logging.basicConfig()
+  logging.getLogger('sqlalchemy.pool').setLevel(logging.debug)
+  database = create_engine(app.config['DB_URL'], encoding='utf-8', pool_pre_ping=True)
   app.database = database
   
   
