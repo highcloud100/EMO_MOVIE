@@ -129,7 +129,7 @@
             <input type="int" id="max_pos" value=5>
             <br>
             <label for="max_cur">time stamp</label>
-            <input type="int" id="max_time" value=5>
+            <input type="int" id="max_time" value=3>
         </form>
       </div>
     </div>
@@ -265,7 +265,7 @@
       }
 
       // 카운팅 / 관리
-      //일단 잘 모르겠어서 green : timestamp +- period(입력한 시간) 구간 / yellow : timestamp +- (입력한 시간+3) 구간으로 설정함 yellow, green 앞뒤로 각각 연구자가 입력할 수 있어야 하나..?
+      //일단 잘 모르겠어서 green : timestamp +- period(입력한 시간) 구간 / yellow : timestamp +- (입력한 시간+2) 구간으로 설정함 yellow, green 앞뒤로 각각 연구자가 입력할 수 있어야 하나..?
       var i = 0;
       var check = 0;
       function count(){
@@ -282,8 +282,8 @@
           var p = time + ' : ' + point;
          }
 
-        if((time < timeStamp[i] - period && time > timeStamp[i] - period- 3)
-        || (time < timeStamp[i] + period + 3 && time > timeStamp[i] + period)){
+        if((time < timeStamp[i] - period && time > timeStamp[i] - period- 2)
+        || (time < timeStamp[i] + period + 2 && time > timeStamp[i] + period)){
           sp.style.backgroundColor = "#FFB914";
           if ( p != undefined && clickFlag==1){
             yellow.push(p);
