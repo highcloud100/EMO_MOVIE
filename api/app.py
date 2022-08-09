@@ -19,7 +19,7 @@ def create_app(test_config=None):
   app = Flask(__name__)
 
   app.config.from_envvar('APP_CONFIG_FILE')
-  app.permanent_session_lifetime = timedelta(minutes=60) #세션 만료 시간 1시간
+  app.permanent_session_lifetime = timedelta(minutes=180) #세션 만료 시간 1시간
   
   database = create_engine(app.config['DB_URL'], encoding='utf-8', pool_pre_ping=True)
   app.database = database
