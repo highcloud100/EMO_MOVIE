@@ -57,7 +57,7 @@ def create_app(test_config=None):
   @app.route('/movie', methods=['POST'])  #home.html에서 영화 선택시 post 
   def movie():
     Title = request.form['title']
-    return render_template('main.html', title = Title) #main.html 에 영화 제목 반환
+    return render_template('main2.html', title = Title) #main.html 에 영화 제목 반환
 
 
   #db에서 영화 정보 불러오기
@@ -130,7 +130,7 @@ def create_app(test_config=None):
   @app.route('/poster')
   def render_file():
     objects = app.database.execute("select title from movie_info").fetchall() #db에서 영화 리스트 뽑아옴
-    print(objects)
+    #print(objects)
     return render_template('upload.html',mlist=objects)
 
   #이미지 업로드
@@ -157,67 +157,72 @@ def create_app(test_config=None):
         return redirect("/adminPass")
 
       data = request.get_json()
+
       white = data['WHITE']
       yellow = data['YELLOW']
       green = data['GREEN']
       title = data['TITLE']
 
-      
       #white
       w_time = []
+      w_Atime = []
       point_White_x = []
       point_White_y = []
       for i in range(len(white)):
           x = white[i]
-          ddate = x.split(":")
+          ddate = x.split("/")
           point = ddate[1].split(", ")
           w_time.append(str(round((float)(ddate[0]),2)))
+          w_Atime.append(str(ddate[2]).strip())
           point_White_x.append(point[0])
           point_White_y.append(point[1])
 
       white_x = ','.join(point_White_x)
       white_y = ','.join(point_White_y)
       w_time = ','.join(w_time)
-
+      w_Atime = ','.join(w_Atime)
 
       y_time = []
+      y_Atime = []
       point_Yellow_x = []
       point_Yellow_y = []
       for i in range(len(yellow)):
           x = yellow[i]
-          ddate = x.split(":")
+          ddate = x.split("/")
           point = ddate[1].split(", ")
           y_time.append(str(round((float)(ddate[0]),2)))
+          y_Atime.append(str(ddate[2]).strip())
           point_Yellow_x.append(point[0])
           point_Yellow_y.append(point[1])
 
       yellow_x = ','.join(point_Yellow_x)
       yellow_y = ','.join(point_Yellow_y)
       y_time = ','.join(y_time)
+      y_Atime = ','.join(y_Atime)
 
       g_time = []
-      point_Green_x, point_Green_y = [], []
+      g_Atime = []
+      point_Green_x = []
+      point_Green_y = []
       for i in range(len(green)):
           x = green[i]
-          ddate = x.split(":")
+          ddate = x.split("/")
           point = ddate[1].split(", ")
           g_time.append(str(round((float)(ddate[0]),2)))
+          g_Atime.append(str(ddate[2]).strip())
           point_Green_x.append(point[0])
           point_Green_y.append(point[1])
 
       green_x = ','.join(point_Green_x)
       green_y = ','.join(point_Green_y)
       g_time = ','.join(g_time)
-
-      print(white_x, '\n',  white_y,'\n', yellow_x, '\n', yellow_y, '\n', green_x, '\n', green_y, '\n')
-
-
+      g_Atime = ','.join(g_Atime)
 
       #subjectID, param 해결해야함
       try:
         with app.database.connect() as con:
-          con.execute(f"INSERT INTO data(subjectID, movieTitle, param, white_time ,white_x, white_y, yellow_time,yellow_x, yellow_y, green_time, green_x, green_y) \
-        VALUES(\'{session['user']['id']}\', \'{title}\',{5}, \'{w_time}\' ,\'{white_x}\', \'{white_y}\', \'{y_time}\' , \'{yellow_x}\', \'{yellow_y}\', \'{g_time}\' ,\'{green_x}\', \'{green_y}\')")
+          con.execute(f"INSERT INTO data(subjectID, movieTitle, param, white_time ,white_x, white_y, yellow_time,yellow_x, yellow_y, green_time, green_x, green_y, green_Atime, yellow_Atime, white_Atime) \
+        VALUES(\'{session['user']['id']}\', \'{title}\',{5}, \'{w_time}\' ,\'{white_x}\', \'{white_y}\', \'{y_time}\' , \'{yellow_x}\', \'{yellow_y}\', \'{g_time}\' ,\'{green_x}\', \'{green_y}\',\'{g_Atime}\',\'{y_Atime}\',\'{w_Atime}\')")
         return redirect(url_for('movieSelect'))
       except ValueError as m:
         print(m)

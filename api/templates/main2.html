@@ -5,25 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    @media screen and (min-width: 1024px) {
-      .container{
-        display:grid;
-        justify-items: center;
-        grid-template-columns: 2fr 1fr;
-        grid-template-rows: auto;
-        grid-column-gap: 1rem;
-      }
-    }
-    
-    @media screen and (max-width: 1023px) {
-      .container{
-        display:grid;
-        justify-items: center;
-        grid-template-columns: auto;
-        grid-column-gap: 20px;
-      }
-    }
-
     body{
       -webkit-user-select: none;
       -moz-user-select: none;
@@ -71,6 +52,7 @@
       border-radius: 50%;
       background-color: black;
       visibility: hidden;
+      pointer-events: none;
     }
     
     #my_div {
@@ -87,6 +69,25 @@
     }
     #blank{
       height: 100px;
+    }
+
+    @media screen and (min-width: 1024px) {
+      .container{
+        display:grid;
+        justify-items: center;
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: auto;
+        grid-column-gap: 1rem;
+      }
+    }
+    
+    @media screen and (max-width: 1023px) {
+      .container{
+        display:grid;
+        justify-items: center;
+        grid-template-columns: auto;
+        grid-column-gap: 20px;
+      }
     }
   </style>
 
@@ -141,8 +142,8 @@
       const circle = document.querySelector("#circle");
 
       document.addEventListener("mousemove", (e) => {
-          const mouseX = e.clientX;
-          const mouseY = e.clientY;
+          const mouseX = e.pageX;
+          const mouseY = e.pageY;
           circle.style.left = mouseX + 'px';
           circle.style.top = mouseY + 'px';
       });
@@ -156,17 +157,26 @@
      
       // 클릭되면
       var clickFlag = 0;
+      var clickRealTime = 0;
       function clicked(e){
         range = 200/document.getElementById("max_pos").value;
         x = (e.offsetX-200)/range;
         y = (-1*(e.offsetY-200))/range;
         document.getElementById('pos').value = x + ", " + y;
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
+        const mouseX = e.pageX;
+        const mouseY = e.pageY;
         clickFlag = 1;
         document.getElementById("pointer").style.visibility = "visible";
         document.getElementById("pointer").style.left = mouseX + 'px';
         document.getElementById("pointer").style.top = mouseY + 'px';
+
+        let today = new Date();   
+        let hours = today.getHours(); // 시
+        let minutes = today.getMinutes();  // 분
+        let seconds = today.getSeconds();  // 초
+        let milliseconds = today.getMilliseconds(); // 밀리초
+
+        clickRealTime = hours + ':' + minutes + ':' + seconds + ':' + milliseconds
       }
 
 
@@ -278,7 +288,7 @@
         var p;
 
         if (time != 0 && time != NaN && point != ""){
-          var p = time + ' : ' + point;
+          var p = time + ' / ' + point + ' / ' + clickRealTime;
          }
 
         if((time < timeStamp[i] - period && time > timeStamp[i] - period- 3)
